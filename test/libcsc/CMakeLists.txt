@@ -13,6 +13,5 @@ target_include_directories(
 target_link_libraries(
         string.test
         GTest::gtest_main
-        string
 )
 gtest_discover_tests(string.test)

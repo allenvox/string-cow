@@ -20,5 +20,4 @@ endif()
 enable_testing()
 
 add_subdirectory(external)
-add_subdirectory(src)
 add_subdirectory(test)
