@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <cstddef>
 #include <cstring>
-#include <iostream>
 #include <stdexcept>
 
 namespace csc {
@@ -143,13 +142,10 @@ public:
 
   // Push back
   void push_back(char c) {
-    std::cerr << value->size << ' ' << value->capacity << '\n';
     if (value->size + 1 >= value->capacity) {
       reserve(value->size * 2 + 2);
     }
-    std::cerr << value->size << ' ' << value->capacity << '\n';
     value->data[value->size++] = c;
-    std::cerr << value->size << ' ' << value->capacity << '\n';
     value->data[value->size] = '\0';
   }
 
