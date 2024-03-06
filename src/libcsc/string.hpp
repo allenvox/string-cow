@@ -142,8 +142,8 @@ public:
 
   // Push back
   void push_back(char c) {
-    if (value->size == value->capacity) {
-      reserve(value->size * 2);
+    if (value->size + 1 >= value->capacity) {
+      reserve(value->size * 2 + 1);
     }
     value->data[value->size++] = c;
     value->data[value->size] = '\0';
