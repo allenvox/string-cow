@@ -333,7 +333,6 @@ public:
   const const_iterator end() const {
     return const_iterator(value->data + value->size);
   }
-
 };
 
 } // namespace csc
