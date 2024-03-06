@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <cstddef>
 #include <cstring>
-#include <iostream>
 #include <stdexcept>
 
 namespace csc {
@@ -23,7 +22,7 @@ private:
       strlcpy(data, d, capacity);
     }
 
-    ~StringValue() { delete[] data; std::cerr << "deleted stringvalue\n"; }
+    ~StringValue() { delete[] data; }
 
     void detach() {
       if (refCount > 1) {
@@ -94,7 +93,6 @@ public:
     if (value != nullptr && --value->refCount == 0) {
       delete value;
     }
-    std::cerr << "deleted string\n";
   }
 
   // Operator[]
@@ -145,7 +143,7 @@ public:
   // Push back
   void push_back(char c) {
     if (value->size == value->capacity) {
-      reserve(value->size + 1);
+      reserve(value->size * 2);
     }
     value->data[value->size++] = c;
     value->data[value->size] = '\0';
