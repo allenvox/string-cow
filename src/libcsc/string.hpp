@@ -188,24 +188,6 @@ public:
     value->data[value->size] = '\0';
   }
 
-  // Begin
-  char *begin() {
-    value->detach();
-    return value->data;
-  }
-
-  // Const begin
-  const char *begin() const { return value->data; }
-
-  // End
-  char *end() {
-    value->detach();
-    return value->data + value->size;
-  }
-
-  // Const end
-  const char *end() const { return value->data + value->size; }
-
   // Empty
   bool empty() const { return value->size == 0; }
 
@@ -229,6 +211,129 @@ public:
 
   // C string
   const char *c_str() const { return value->data; }
+
+  // Iterator class
+  class iterator {
+  private:
+    char *ptr;
+
+  public:
+    using iterator_category = std::random_access_iterator_tag;
+    using difference_type = std::ptrdiff_t;
+    using value_type = char;
+    using pointer = char *;
+    using reference = char &;
+
+    explicit iterator(char *p) : ptr(p) {}
+
+    // Dereferencing
+    reference operator*() const { return *ptr; }
+
+    // Increment
+    iterator &operator++() {
+      ++ptr;
+      return *this;
+    }
+
+    // Post-increment
+    const iterator operator++(int) {
+      iterator temp = *this;
+      ++ptr;
+      return temp;
+    }
+
+    // Decrement
+    iterator &operator--() {
+      --ptr;
+      return *this;
+    }
+
+    // Post-decrement
+    const iterator operator--(int) {
+      iterator temp = *this;
+      --ptr;
+      return temp;
+    }
+
+    // Compound assignment +=
+    iterator &operator+=(difference_type n) {
+      ptr += n;
+      return *this;
+    }
+
+    // Compound assignment -=
+    iterator &operator-=(difference_type n) {
+      ptr -= n;
+      return *this;
+    }
+
+    // Subscripting
+    reference operator[](difference_type n) const { return *(ptr + n); }
+
+    // Addition
+    friend iterator operator+(iterator it, difference_type n) {
+      return iterator(it.ptr + n);
+    }
+
+    // Subtraction
+    friend iterator operator-(iterator it, difference_type n) {
+      return iterator(it.ptr - n);
+    }
+
+    // Equality
+    friend bool operator==(const iterator &lhs, const iterator &rhs) {
+      return lhs.ptr == rhs.ptr;
+    }
+
+    // Inequality
+    friend bool operator!=(const iterator &lhs, const iterator &rhs) {
+      return !(lhs == rhs);
+    }
+
+    // Less than
+    friend bool operator<(const iterator &lhs, const iterator &rhs) {
+      return lhs.ptr < rhs.ptr;
+    }
+
+    // Greater than
+    friend bool operator>(const iterator &lhs, const iterator &rhs) {
+      return lhs.ptr > rhs.ptr;
+    }
+
+    // Less than or equal to
+    friend bool operator<=(const iterator &lhs, const iterator &rhs) {
+      return lhs.ptr <= rhs.ptr;
+    }
+
+    // Greater than or equal to
+    friend bool operator>=(const iterator &lhs, const iterator &rhs) {
+      return lhs.ptr >= rhs.ptr;
+    }
+  };
+
+  // Const iterator
+  using const_iterator = const iterator;
+
+  // Begin method
+  iterator begin() {
+    value->detach();
+    return iterator(value->data);
+  }
+
+  // Const begin method
+  const const_iterator begin() const { return const_iterator(value->data); }
+
+  // End method
+  iterator end() {
+    value->detach();
+    return iterator(value->data + value->size);
+  }
+
+  // Const end method
+  const const_iterator end() const {
+    return const_iterator(value->data + value->size);
+  }
+
 };
 
 } // namespace csc
