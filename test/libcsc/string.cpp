@@ -108,6 +108,55 @@ TEST(StringTest, BeginEnd) {
   EXPECT_EQ(*(s.end() - 1), 't');
 }
 
+TEST(StringTest, IteratorTraversal) {
+  String s("hello");
+  String::iterator it = s.begin();
+  String::iterator end = s.end();
+
+  // Test forward traversal
+  int count = 0;
+  while (it != end) {
+    ++count;
+    ++it;
+  }
+  EXPECT_EQ(count, 5); // 'hello' has 5 characters
+}
+
+TEST(StringTest, IteratorDereferencing) {
+  String s("hello");
+  String::iterator it = s.begin();
+
+  // Test dereferencing
+  EXPECT_EQ(*it, 'h');
+  ++it;
+  EXPECT_EQ(*it, 'e');
+}
+
+TEST(StringTest, IteratorComparison) {
+  String s("hello");
+  String::iterator it1 = s.begin();
+  String::iterator it2 = s.begin();
+  String::iterator end = s.end();
+
+  // Test iterator equality and inequality
+  EXPECT_EQ(it1, it2);
+  ++it1;
+  EXPECT_NE(it1, it2);
+
+  // Test iterator comparison
+  EXPECT_LT(it2, it1);
+  EXPECT_LE(it2, it1);
+  EXPECT_GT(it1, it2);
+  EXPECT_GE(it1, it2);
+
+  // Test iterator comparison with end iterator
+  while (it1 != end) {
+    ++it1;
+  }
+  EXPECT_EQ(it1, end);
+  EXPECT_NE(it2, end);
+}
+
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
