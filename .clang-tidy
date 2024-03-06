@@ -51,7 +51,8 @@ Checks: >
   -bugprone-narrowing-conversions,
   -cppcoreguidelines-narrowing-conversions,
   -google-build-using-namespace,
-  -hicpp-multiway-paths-covered
+  -hicpp-multiway-paths-covered,
+  -readability-const-return-type
 WarningsAsErrors: '*'
 HeaderFilterRegex: 'src/libcsc'
 AnalyzeTemporaryDtors: false
