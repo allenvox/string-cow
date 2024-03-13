@@ -52,7 +52,11 @@ Checks: >
   -cppcoreguidelines-narrowing-conversions,
   -google-build-using-namespace,
   -hicpp-multiway-paths-covered,
-  -readability-const-return-type
+  -readability-const-return-type,
+  -cppcoreguidelines-avoid-c-array,
+  -hicpp-avoid-c-arrays,
+  -modernize-avoid-c-arrays,
+  -cppcoreguidelines-avoid-c-arrays
 WarningsAsErrors: '*'
 HeaderFilterRegex: 'src/libcsc'
 AnalyzeTemporaryDtors: false
