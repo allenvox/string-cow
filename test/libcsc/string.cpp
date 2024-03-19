@@ -2,6 +2,7 @@
 
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <utility>
 
 using namespace csc;
@@ -155,6 +156,13 @@ TEST(StringTest, IteratorComparison) {
   }
   EXPECT_EQ(it1, end);
   EXPECT_NE(it2, end);
+}
+
+TEST(StringTest, Find) {
+  String s("hi");
+  EXPECT_NE(std::find(s.begin(), s.end(), 'i'), s.end());
+  EXPECT_EQ(std::find(s.begin(), s.end(), 'a'), s.end());
+  EXPECT_EQ(*(std::find(s.begin(), s.end(), 'h')), 'h');
 }
 
 int main(int argc, char *argv[]) {
