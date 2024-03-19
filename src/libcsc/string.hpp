@@ -52,7 +52,7 @@ private:
       data[size] = '\0';
     }
 
-  } *value;
+  } * value;
 
 public:
   // Constructor from const char*
@@ -308,6 +308,11 @@ public:
     // Greater than or equal to
     friend bool operator>=(const iterator &lhs, const iterator &rhs) {
       return lhs.ptr >= rhs.ptr;
+    }
+
+    // Difference
+    friend difference_type operator-(const iterator &lhs, const iterator &rhs) {
+      return lhs.ptr - rhs.ptr;
     }
   };
 
