@@ -52,7 +52,7 @@ private:
       data[size] = '\0';
     }
 
-  } * value;
+  } *value;
 
 public:
   // Constructor from const char*
