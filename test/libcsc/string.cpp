@@ -165,6 +165,50 @@ TEST(StringTest, Find) {
   EXPECT_EQ(*(std::find(s.begin(), s.end(), 'h')), 'h');
 }
 
+TEST(StringTest, ComparisonOperators) {
+  String s1("hello");
+  String s2("hello");
+  String s3("world");
+  EXPECT_EQ(s1, s2);
+  EXPECT_NE(s1, s3);
+
+  String s4("apple");
+  String s5("banana");
+  EXPECT_LT(s4, s5);
+  EXPECT_LE(s4, s5);
+  EXPECT_GT(s5, s4);
+  EXPECT_GE(s5, s4);
+}
+
+TEST(StringTest, ConcatOperator) {
+  String s1("Hello");
+  String s2(" world!");
+  String expected("Hello world!");
+  EXPECT_EQ(s1 + s2, expected);
+}
+
+TEST(StringTest, StreamOutOperator) {
+  String s("hello");
+  std::stringstream ss;
+  ss << s;
+  EXPECT_EQ(ss.str(), "hello");
+}
+
+TEST(StringTest, CopyOnWrite) {
+  String s1("hello");
+  String s2 = s1;
+  s2.push_back('!');
+  EXPECT_NE(s1, s2);
+
+  String s3 = s1;
+  s3.insert(1, "wow");
+  EXPECT_NE(s1, s3);
+
+  String s4 = s1;
+  s4.erase(1, 3);
+  EXPECT_NE(s1, s4);
+}
+
 int main(int argc, char *argv[]) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
