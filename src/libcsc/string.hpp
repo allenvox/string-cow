@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cstddef>
 #include <cstring>
+#include <iostream>
 #include <stdexcept>
 
 namespace csc {
@@ -23,15 +24,6 @@ private:
     }
 
     ~StringValue() { delete[] data; }
-
-    void detach() {
-      if (refCount > 1) {
-        --refCount;
-        char *newData = new char[size + 1];
-        strlcpy(newData, data, size + 1);
-        data = newData;
-      }
-    }
 
     void resize(size_t newSize, char filled = '\0') {
       if (newSize > capacity) {
@@ -55,6 +47,16 @@ private:
   } *value;
 
 public:
+  // Detach value pointer
+  void detach() {
+    if (value->refCount > 1) {
+      auto *newData = new char[value->capacity];
+      std::copy(value->data, value->data + value->size + 1, newData);
+      --value->refCount;
+      value = new StringValue(newData, value->capacity);
+    }
+  }
+
   // Constructor from const char*
   explicit String(const char *d = "") { value = new StringValue(d); }
 
@@ -79,10 +81,13 @@ public:
   // Copy assignment
   String &operator=(const String &rhs) {
     if (this != &rhs) {
+      // Decrement the reference count of the current string
       if (--value->refCount == 0) {
         delete value;
       }
+      // Copy the value pointer from rhs
       value = rhs.value;
+      // Increment the reference count of the new value
       ++value->refCount;
     }
     return *this;
@@ -97,7 +102,7 @@ public:
 
   // Operator[]
   char &operator[](size_t index) {
-    value->detach();
+    detach();
     return value->data[index];
   }
 
@@ -109,7 +114,7 @@ public:
     if (index >= value->size) {
       throw std::out_of_range("Index out of range");
     }
-    value->detach();
+    detach();
     return value->data[index];
   }
 
@@ -123,14 +128,14 @@ public:
 
   // Resize
   void resize(size_t newSize, char filled = '\0') {
-    value->detach();
+    detach();
     value->resize(newSize, filled);
   }
 
   // Reserve
   void reserve(size_t newCap) {
     if (newCap > value->capacity) {
-      value->detach();
+      detach();
       // Create new buf with new capacity, copy data
       char *newData = new char[newCap + 1];
       strlcpy(newData, value->data, newCap + 1);
@@ -142,6 +147,7 @@ public:
 
   // Push back
   void push_back(char c) {
+    detach();
     if (value->size + 1 >= value->capacity) {
       reserve(value->size * 2 + 2);
     }
@@ -158,7 +164,7 @@ public:
     if (len + value->size > value->capacity) {
       reserve(len + value->size);
     }
-    value->detach();
+    detach();
     // Push existing elements to the right
     for (size_t i = value->size; i >= pos; --i) {
       value->data[i + len] = value->data[i];
@@ -179,7 +185,7 @@ public:
     if (pos + len > value->size) {
       len = value->size - pos; // Correct len
     }
-    value->detach();
+    detach();
     // Push elements from right to the beginning of str
     for (size_t i = pos; i + len < value->size; ++i) {
       value->data[i] = value->data[i + len];
@@ -200,7 +206,7 @@ public:
   // Shrink to fit
   void shrink_to_fit() {
     if (value->capacity > value->size) {
-      value->detach();
+      detach();
       char *newData = new char[value->size + 1];
       strlcpy(newData, value->data, value->size + 1);
       delete[] value->data;
@@ -321,7 +327,7 @@ public:
 
   // Begin method
   iterator begin() {
-    value->detach();
+    detach();
     return iterator(value->data);
   }
 
@@ -330,7 +336,7 @@ public:
 
   // End method
   iterator end() {
-    value->detach();
+    detach();
     return iterator(value->data + value->size);
   }
 
@@ -339,5 +345,46 @@ public:
     return const_iterator(value->data + value->size);
   }
 };
+
+// Concatenation operator
+inline String operator+(const String &lhs, const String &rhs) {
+  String result(lhs);
+  result.reserve(result.size() + rhs.size());
+  for (char rh : rhs) {
+    result.push_back(rh);
+  }
+  return result;
+}
+
+// Comparison operators
+inline bool operator==(const String &lhs, const String &rhs) {
+  return std::strcmp(lhs.c_str(), rhs.c_str()) == 0;
+}
+
+inline bool operator!=(const String &lhs, const String &rhs) {
+  return !(lhs == rhs);
+}
+
+inline bool operator<(const String &lhs, const String &rhs) {
+  return std::strcmp(lhs.c_str(), rhs.c_str()) < 0;
+}
+
+inline bool operator<=(const String &lhs, const String &rhs) {
+  return std::strcmp(lhs.c_str(), rhs.c_str()) <= 0;
+}
+
+inline bool operator>(const String &lhs, const String &rhs) {
+  return std::strcmp(lhs.c_str(), rhs.c_str()) > 0;
+}
+
+inline bool operator>=(const String &lhs, const String &rhs) {
+  return std::strcmp(lhs.c_str(), rhs.c_str()) >= 0;
+}
+
+// Stream output operator
+inline std::ostream &operator<<(std::ostream &os, const String &str) {
+  os << str.c_str();
+  return os;
+}
 
 } // namespace csc
