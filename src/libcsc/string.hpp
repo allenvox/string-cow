@@ -50,10 +50,9 @@ public:
   // Detach value pointer
   void detach() {
     if (value->refCount > 1) {
-      auto *newData = new char[value->capacity];
-      std::copy(value->data, value->data + value->size + 1, newData);
+      auto *newValue = new StringValue(value->data, value->capacity);
       --value->refCount;
-      value = new StringValue(newData, value->capacity);
+      value = newValue;
     }
   }
 
